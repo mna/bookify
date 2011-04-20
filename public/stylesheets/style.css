@@ -5,3 +5,15 @@ body {
 a {
   color: #00b7ff;
 }
+#msgs {
+  width: 200px;
+  height: 200px;
+  border: solid 1px;
+  overflow: auto;
+}
+#text {
+  width: 400px;
+  height: 400px;
+  border: solid 1px;
+  overflow: auto;
+}
