@@ -1,5 +1,76 @@
 $(document).ready(function() {  
   
+    var Chapter = (function(container, newChapter) {
+        var chapDiv;
+
+        function createNewChapterMode(container) {
+          var btnNew;
+
+          btnNew = document.createElement('input');
+          $(btnNew).attr({'type': 'button', 'value': 'New chapter...'});
+          $(btnNew).addClass('newchapter');
+          $(chapDiv).append(btnNew);
+          $(btnNew).click(function(event) {
+            createEditChapterMode(chapDiv);
+          });
+        }
+        
+        function createEditChapterMode(container) {
+          var label;
+          var url;
+          var btnSave;
+          
+          $(container).empty();
+          label = document.createElement('span');
+          $(label).text('URL:');
+          url = document.createElement('input');
+          $(url).attr({'type': 'url'});
+          $(url).addClass('url');
+          btnSave = document.createElement('input');
+          $(btnSave).attr({'type': 'button', 'value': 'Save'});
+          $(btnSave).addClass('savechapter');
+          $(container).append(label);
+          $(container).append(url);
+          $(container).append(btnSave);
+          $(url).focus();
+          
+          $(btnSave).click(function(event) {
+           $.getJSON("http://viewtext.org/api/text?url=" + $('.url', $(this).parent()).val() + "&callback=?",
+            function (data) {
+              // Data contains: 
+              // callback: callback ID
+              // content: the extracted text (HTML)
+              // responseUrl: the url containing the extracted text
+              // title: the title of the article
+              // url: the source url
+              createDisplayMode(container, data);
+            });  
+          });
+        }
+        
+        function createDisplayMode(container, data) {
+          var hdr;
+          var divPrev;
+          
+          $(container).empty();
+          hdr = document.createElement('h3');
+          $(hdr).text('Chapter ? - ' + data.title);
+          divPrev = document.createElement('div');
+          $(divPrev).addClass('content-preview');
+          $(divPrev).html(data.content);
+          $(container).append(hdr);
+          $(container).append(divPrev);
+        }
+        
+        chapDiv = document.createElement('div');
+        $(container).append(chapDiv);
+        if (newChapter) {
+          createNewChapterMode(chapDiv);
+        }
+        
+        return chapDiv;
+    });
+    
     socketInit = (function() {
       // Create SocketIO instance, connect
       var socket = new io.Socket('localhost',{
@@ -25,26 +96,16 @@ $(document).ready(function() {
         socket.send(message);
       }
       
-      $('#msg').keypress(function(event) {
+      $('#title').keypress(function(event) {
         if (event.keyCode == '13') {
           sendMessageToServer(this.value);
           event.preventDefault();
         }
       });
       
-      $('#disconnect').click(function(event) {
-          socket.disconnect();
-      });
-      
       $('window').unload(function(event) {
           socket.disconnect();
-      });
-      
-      $('#gettext').click(function(event) {
-         $.getJSON("http://viewtext.org/api/text?url=" + $("#url").val() + "&callback=?",
-          function (data) {
-            $("#text").html(data.content);
-          });  
+          $('.callviewtext').die('click');
       });
     });
     
@@ -183,6 +244,6 @@ $(document).ready(function() {
     });
 	  
     socketInit();
-  
+    new Chapter($('#chapters'), true);
 });
 

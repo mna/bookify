@@ -1,6 +1,14 @@
 h1= title
 p Welcome to #{title}
 form
-  input#msg(type="text")
-  input#disconnect(type="button")
-  #msgs
+  #left
+    span Book title
+    input#title(type="text")
+    #msgs
+  
+  #main
+    #chapters
+    
+    input#url(type="text")
+    input#gettext(type="button")
+    #text
