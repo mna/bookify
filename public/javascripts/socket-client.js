@@ -6,9 +6,10 @@ $(document).ready(function() {
         function createNewChapterMode(container) {
           var btnNew;
 
+          $(container).empty();
+          
           btnNew = document.createElement('input');
           $(btnNew).attr({'type': 'button', 'value': 'New chapter...'});
-          $(btnNew).addClass('newchapter');
           $(chapDiv).append(btnNew);
           $(btnNew).click(function(event) {
             createEditChapterMode(chapDiv);
@@ -19,47 +20,76 @@ $(document).ready(function() {
           var label;
           var url;
           var btnSave;
+          var btnCancel;
           
           $(container).empty();
           label = document.createElement('span');
           $(label).text('URL:');
           url = document.createElement('input');
-          $(url).attr({'type': 'url'});
-          $(url).addClass('url');
+          $(url).attr({'type': 'url', 'placeholder': 'Input URL of article'});
           btnSave = document.createElement('input');
           $(btnSave).attr({'type': 'button', 'value': 'Save'});
-          $(btnSave).addClass('savechapter');
+          btnCancel = document.createElement('input');
+          $(btnCancel).attr({'type': 'button', 'value': 'Cancel'});
           $(container).append(label);
           $(container).append(url);
           $(container).append(btnSave);
+          $(container).append(btnCancel);
           $(url).focus();
           
           $(btnSave).click(function(event) {
-           $.getJSON("http://viewtext.org/api/text?url=" + $('.url', $(this).parent()).val() + "&callback=?",
-            function (data) {
-              // Data contains: 
-              // callback: callback ID
-              // content: the extracted text (HTML)
-              // responseUrl: the url containing the extracted text
-              // title: the title of the article
-              // url: the source url
-              createDisplayMode(container, data);
-            });  
+              if ($(url).val().length > 0) {
+                 var imgWait = document.createElement('img');
+                 $(imgWait).attr('src', '/images/ajax-loader.gif');
+                 $(container).append(imgWait);
+                 $(btnSave).attr('disabled', 'disabled');
+                 $(btnCancel).attr('disabled', 'disabled');
+                 $.getJSON("http://viewtext.org/api/text?url=" + $(url).val() + "&callback=?",
+                  function (data, err) {
+                    // Data contains: 
+                    // callback: callback ID
+                    // content: the extracted text (HTML)
+                    // responseUrl: the url containing the extracted text
+                    // title: the title of the article
+                    // url: the source url
+                    if (data.content) {
+                      createDisplayMode(container, data);
+                    } else {
+                      createEditChapterMode(container);
+                    }
+                  });  
+              }
+          });
+          
+          $(btnCancel).click(function(event) {
+              createNewChapterMode(container);
           });
         }
         
         function createDisplayMode(container, data) {
           var hdr;
           var divPrev;
+          var clickTitle;
           
           $(container).empty();
+          
+          clickTitle = document.createElement('a');
+          $(clickTitle).attr('href', '#');
+          
           hdr = document.createElement('h3');
           $(hdr).text('Chapter ? - ' + data.title);
+          $(clickTitle).append(hdr);
           divPrev = document.createElement('div');
           $(divPrev).addClass('content-preview');
+          $(divPrev).toggleClass('hidden');
           $(divPrev).html(data.content);
-          $(container).append(hdr);
+          $(container).append(clickTitle);
           $(container).append(divPrev);
+
+          $(clickTitle).click(function(event) {
+              $(divPrev).toggleClass('hidden');
+              event.preventDefault();
+          });
         }
         
         chapDiv = document.createElement('div');
