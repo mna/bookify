@@ -33,5 +33,7 @@ a {
 }
 .hidden {
   display: none;
-  visibility: hidden;
+}
+div.tab {
+  display: table-cell;
 }

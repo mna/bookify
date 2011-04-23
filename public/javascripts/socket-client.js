@@ -1,7 +1,8 @@
 $(document).ready(function() {  
   
-    var Chapter = (function(container, newChapter) {
+    var Chapter = (function(container, newChapter, chapterInfo) {
         var chapDiv;
+        var chapInfo = chapterInfo || { };
 
         function createNewChapterMode(container) {
           var btnNew;
@@ -11,6 +12,9 @@ $(document).ready(function() {
           btnNew = document.createElement('input');
           $(btnNew).attr({'type': 'button', 'value': 'New chapter...'});
           $(chapDiv).append(btnNew);
+          
+          $(chapDiv).trigger('chapterModeChanged', ['new']);
+          
           $(btnNew).click(function(event) {
             createEditChapterMode(chapDiv);
           });
@@ -37,6 +41,15 @@ $(document).ready(function() {
           $(container).append(btnCancel);
           $(url).focus();
           
+          $(chapDiv).trigger('chapterModeChanged', ['edit']);
+
+          $(url).keypress(function(event) {
+            if (event.keyCode == '13') {
+              $(btnSave).trigger('click');
+              event.preventDefault();
+            }
+          });
+
           $(btnSave).click(function(event) {
               if ($(url).val().length > 0) {
                  var imgWait = document.createElement('img');
@@ -73,12 +86,15 @@ $(document).ready(function() {
           
           $(container).empty();
           
+          // Create the title which toggles the content preview
+          chapInfo = data;
           clickTitle = document.createElement('a');
           $(clickTitle).attr('href', '#');
-          
           hdr = document.createElement('h3');
-          $(hdr).text('Chapter ? - ' + data.title);
+          $(hdr).text(data.title);
           $(clickTitle).append(hdr);
+          
+          // Create the content preview
           divPrev = document.createElement('div');
           $(divPrev).addClass('content-preview');
           $(divPrev).toggleClass('hidden');
@@ -86,6 +102,8 @@ $(document).ready(function() {
           $(container).append(clickTitle);
           $(container).append(divPrev);
 
+          $(chapDiv).trigger('chapterModeChanged', ['display']);
+          
           $(clickTitle).click(function(event) {
               $(divPrev).toggleClass('hidden');
               event.preventDefault();
@@ -93,6 +111,7 @@ $(document).ready(function() {
         }
         
         chapDiv = document.createElement('div');
+        $(chapDiv).addClass('chapter');
         $(container).append(chapDiv);
         if (newChapter) {
           createNewChapterMode(chapDiv);
@@ -274,6 +293,11 @@ $(document).ready(function() {
     });
 	  
     socketInit();
-    new Chapter($('#chapters'), true);
+    var lastChap = new Chapter($('#chapters'), true);
+    $('.chapter').live('chapterModeChanged', function(event, newMode) {
+        if (event.target === lastChap && newMode === 'display') {
+          lastChap = new Chapter($('#chapters'), true);
+        }
+    });
 });
 
