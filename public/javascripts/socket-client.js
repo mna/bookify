@@ -2,7 +2,7 @@ $(document).ready(function() {
   
     var Chapter = (function(container, newChapter, chapterInfo) {
         var chapDiv;
-        var chapInfo = chapterInfo || { };
+        var chapInfo = chapterInfo || { 'title': null, 'url': null };
 
         function createNewChapterMode(container) {
           var btnNew;
@@ -57,20 +57,30 @@ $(document).ready(function() {
                  $(container).append(imgWait);
                  $(btnSave).attr('disabled', 'disabled');
                  $(btnCancel).attr('disabled', 'disabled');
-                 $.getJSON("http://viewtext.org/api/text?url=" + $(url).val() + "&callback=?",
-                  function (data, err) {
-                    // Data contains: 
-                    // callback: callback ID
-                    // content: the extracted text (HTML)
-                    // responseUrl: the url containing the extracted text
-                    // title: the title of the article
-                    // url: the source url
-                    if (data.content) {
-                      createDisplayMode(container, data);
-                    } else {
-                      createEditChapterMode(container);
-                    }
-                  });  
+
+                 // Trigger Pre-Save validation
+                  chapDiv.chapterInfo.url = $(url).val().toLowerCase();
+                  var e = jQuery.Event('chapterPreSave');
+                  $(chapDiv).trigger(e);
+                  if (!e.isDefaultPrevented()) {
+                     $.getJSON("http://viewtext.org/api/text?url=" + $(url).val() + "&callback=?",
+                      function (data, err) {
+                        // Data contains: 
+                        // callback: callback ID
+                        // content: the extracted text (HTML)
+                        // responseUrl: the url containing the extracted text
+                        // title: the title of the article
+                        // url: the source url
+                        if (data.content) {
+                          createDisplayMode(container, data);
+                        } else {
+                          createEditChapterMode(container);
+                        }
+                      });  
+                  } else {
+                    window.alert('This URL has already been added to this book.');
+                    createEditChapterMode(container);
+                  }
               }
           });
           
@@ -87,7 +97,9 @@ $(document).ready(function() {
           $(container).empty();
           
           // Create the title which toggles the content preview
-          chapInfo = data;
+          chapDiv.chapterInfo.title = data.title;
+          chapDiv.chapterInfo.url = data.url.toLowerCase();
+          
           clickTitle = document.createElement('a');
           $(clickTitle).attr('href', '#');
           hdr = document.createElement('h3');
@@ -116,6 +128,7 @@ $(document).ready(function() {
         if (newChapter) {
           createNewChapterMode(chapDiv);
         }
+        chapDiv.chapterInfo = chapInfo;
         
         return chapDiv;
     });
@@ -298,6 +311,16 @@ $(document).ready(function() {
         if (event.target === lastChap && newMode === 'display') {
           lastChap = new Chapter($('#chapters'), true);
         }
+    });
+    $('.chapter').live('chapterPreSave', function(event) {
+        $('.chapter').each(function() {
+            if (this !== event.target) {
+              if (this.chapterInfo.url === event.target.chapterInfo.url) {
+                event.preventDefault();
+                return;
+              }
+            }
+        });
     });
 });
 

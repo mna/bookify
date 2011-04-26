@@ -1,11 +1,23 @@
-h1= title
-p Welcome to #{title}
-form
-  #left
-    span Book title
-    input#title(type="text")
-    #msgs
-  
-  #main
-    #chapters
+!!!
+html
+  head
+    title= title
+    link(type="text/css",href="/stylesheets/jquery-ui-1.8.7.custom.css",rel="stylesheet")	
+    link(type="text/css",href="/stylesheets/home.css",rel="stylesheet")	
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js")
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js")
+    script(type="text/javascript",src="/javascripts/home.js")
+  body
+    section#main
+      header
+        hgroup
+          h1= title
+          h2 Making books out of the Web.
+        
+      #edit.button Create or Edit a Book
+      p#buttonSeparator OR
+      #browse.button Browse Existing Books
     
+    aside#login
+      p Login via Facebook
+

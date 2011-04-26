@@ -13,6 +13,7 @@ var app = module.exports = express.createServer();
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.set('view options', {layout: false});
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -38,10 +39,16 @@ app.get('/', function(req, res){
   });
 });
 
+app.get('/edit-book/:id', function(req, res){
+  res.render('edit-book', {
+    title: 'Edit book'
+  });
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {
-  app.listen(9346);
+  app.listen(9626);
   console.log("Express server listening on port %d", app.address().port);
 }
 
