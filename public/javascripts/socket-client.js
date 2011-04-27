@@ -27,10 +27,11 @@ $(document).ready(function() {
           var btnCancel;
           
           $(container).empty();
-          label = document.createElement('span');
+          label = document.createElement('label');
+          $(label).attr('for', 'txtUrl');
           $(label).text('URL:');
           url = document.createElement('input');
-          $(url).attr({'type': 'url', 'placeholder': 'Input URL of article'});
+          $(url).attr({'id': 'txtUrl', 'type': 'url', 'placeholder': 'Input URL of article'});
           btnSave = document.createElement('input');
           $(btnSave).attr({'type': 'button', 'value': 'Save'});
           btnCancel = document.createElement('input');

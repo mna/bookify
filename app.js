@@ -34,8 +34,14 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', function(req, res){
-  res.render('index', {
+  res.render('home', {
     title: 'Bookify!'
+  });
+});
+
+app.get('/edit-book', function(req, res){
+  res.render('edit-book', {
+    title: 'Edit book'
   });
 });
 

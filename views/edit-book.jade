@@ -1,20 +1,16 @@
-!!!
+!!! 5
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js")
-    script(src='http://cdn.socket.io/stable/socket.io.js')
-    script(src='/javascripts/socket-client.js')
+    link(type="text/css",href="/stylesheets/jquery-ui-1.8.7.custom.css",rel="stylesheet")	
+    link(type="text/css",href="/stylesheets/edit-book.css",rel="stylesheet")	
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js")
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js")
+    script(type="text/javascript",src="/javascripts/edit-book.js")
   body
-    h1= title
-    p Welcome to #{title}
-    form
-      #left
-        span Book title
-        input#title(type="text")
-        #msgs
-      
-      #main
-        #chapters
-        
+    #browserContainer
+      #browser
+        span Test
+    
+    #editorContainer
+
