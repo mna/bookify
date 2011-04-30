@@ -41,13 +41,14 @@ app.get('/', function(req, res){
 
 app.get('/edit-book', function(req, res){
   res.render('edit-book', {
-    title: 'Edit book'
+    title: 'Bookify! Editor'
   });
 });
 
 app.get('/edit-book/:id', function(req, res){
   res.render('edit-book', {
-    title: 'Edit book'
+    title: 'Bookify! Editor',
+    bookId: body.params.id
   });
 });
 
@@ -69,4 +70,5 @@ socket.on('connection', function(client){
   client.on('disconnect', function(){ 
     console.log('Déconnecté...'); 
   }); 
-}); 
+});
+

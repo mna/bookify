@@ -12,7 +12,7 @@ html
       header
         hgroup
           h1= title
-          h2 Making books out of the Web
+          h2 Making books out of the Web.
         
       #edit.button Create or Edit a Book
       p#buttonSeparator OR
